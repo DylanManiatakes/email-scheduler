@@ -1,0 +1,6 @@
+#ignored files
+app.py
+check.conf
+*.spec
+build/
+dist/

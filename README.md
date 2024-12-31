@@ -88,4 +88,4 @@ The `check.conf` file controls the application behavior. Here’s what each sect
 - Keep the `check.conf` file secure to protect your email credentials.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License.

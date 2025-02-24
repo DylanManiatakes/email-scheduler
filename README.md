@@ -37,11 +37,14 @@ Subject = Daily Update
 Body = This is the daily email sent at a scheduled time.
 
 [Schedule]
-Time = 05:00
+Mode = Time 
+Interval = 3
+Time = 08:55
 ```
 
 - Replace `smtp.example.com`, `your_email@example.com`, and other placeholders with actual values.
 - The time format under `[Schedule]` must be in `HH:MM` (24-hour clock).
+- Select Time or Timer mode. Time will send the message everyday at the same time, timer will send the message every X minutes where X is the interval. 
 
 ### 3. Install Dependencies
 Install the required Python libraries:
@@ -80,7 +83,9 @@ The `check.conf` file controls the application behavior. Here’s what each sect
   - `Body`: The body content of the email.
 
 - **[Schedule]:** Configures when the email is sent.
-  - `Time`: Time in `HH:MM` format (24-hour clock).
+  - `Time`: Time in `HH:MM` format (24-hour clock). Will be used if Time mode is selected
+  - `Mode`: Time or Timer (Time will send at the time specified, timer will send on the interval specified.)
+  - `Interval`: Interval in Minutes to send the message. Will be used if Timer mode is selected
 
 ## Notes
 - Ensure the SMTP server credentials are valid.

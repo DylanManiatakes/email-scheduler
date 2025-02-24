@@ -7,12 +7,15 @@ import configparser
 
 # Read configuration from .conf file
 CONFIG_FILE = "check.conf"
+
 def load_config():
+    """Loads configuration from check.conf"""
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
     return config
 
 def send_email():
+    """Sends an email based on the config settings"""
     config = load_config()
 
     SMTP_SERVER = config["SMTP"]["Server"]
@@ -45,17 +48,43 @@ def send_email():
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-# Add this line to send the email immediately when the script starts
-send_email()
-
-# Load the schedule time from the config file
+# Load the mode from config
 config = load_config()
-schedule_time = config["Schedule"]["Time"]
+mode = config["Schedule"].get("Mode", "Timer").strip().lower()
 
-# Schedule the email to be sent daily at the specified time
-schedule.every().day.at(schedule_time).do(send_email)
+if mode == "timer":
+    try:
+        INTERVAL = int(config["Schedule"]["Interval"])
+        if INTERVAL <= 0:
+            raise ValueError("Interval must be greater than 0")
+    except (KeyError, ValueError) as e:
+        print(f"Invalid or missing interval in config: {e}. Defaulting to 15 minutes.")
+        INTERVAL = 15  # Default interval if invalid
 
-print(f"Daily email scheduler is running... Emails will be sent at {schedule_time}.")
+    # Send the first email immediately
+    send_email()
+
+    # Schedule the email every INTERVAL minutes
+    schedule.every(INTERVAL).minutes.do(send_email)
+    print(f"Email scheduler is running... Emails will be sent every {INTERVAL} minutes.")
+
+elif mode == "time":
+    try:
+        schedule_time = config["Schedule"]["Time"]
+    except KeyError:
+        print("Missing 'Time' in config. Defaulting to 05:00.")
+        schedule_time = "05:00"
+
+    # Send the first email immediately
+    send_email()
+
+    # Schedule the email at a specific time every day
+    schedule.every().day.at(schedule_time).do(send_email)
+    print(f"Email scheduler is running... Emails will be sent daily at {schedule_time}.")
+
+else:
+    print(f"Invalid mode '{mode}' in config. Please set Mode to 'Timer' or 'Time'. Exiting.")
+    exit(1)
 
 # Keep the script running
 while True:

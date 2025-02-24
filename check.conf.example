@@ -10,4 +10,6 @@ Subject = Daily Update
 Body = This is the daily email sent at a scheduled time.
 
 [Schedule]
-Time = 05:00
+Mode = Time
+Interval = 3
+Time = 08:55

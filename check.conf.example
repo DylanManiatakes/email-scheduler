@@ -3,6 +3,7 @@ Server = smtp.example.com
 Port = 587
 Email = your_email@example.com
 Password = your_password
+Encryption = STARTTLS
 
 [Email]
 ToAddress = recipient_email@example.com

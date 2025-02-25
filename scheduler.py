@@ -22,28 +22,51 @@ def send_email():
     SMTP_PORT = int(config["SMTP"]["Port"])
     EMAIL_ADDRESS = config["SMTP"]["Email"]
     EMAIL_PASSWORD = config["SMTP"]["Password"]
+    ENCRYPTION_METHOD = config["SMTP"].get("Encryption", "STARTTLS").strip().upper()
 
     TO_ADDRESS = config["Email"]["ToAddress"]
     SUBJECT = config["Email"]["Subject"]
     BODY = config["Email"]["Body"]
 
     try:
-        # Create the email
+        # Create the email message
         msg = MIMEMultipart()
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = TO_ADDRESS
         msg["Subject"] = SUBJECT
-
-        # Attach the email body
         msg.attach(MIMEText(BODY, "plain"))
 
-        # Connect to the SMTP server and send the email
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()  # Start TLS encryption
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, TO_ADDRESS, msg.as_string())
+        # Start SMTP connection
+        if ENCRYPTION_METHOD == "SSL":
+            # SSL connection (Port 465)
+            session = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=20)
+            session.ehlo()  # Identify to the server
+        else:
+            # STARTTLS or Unencrypted connection (Ports 587 or 25)
+            session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=20)
+            session.ehlo()  # Identify to the SMTP server
 
-        print("Email sent successfully.")
+            # Attempt STARTTLS if enabled
+            if ENCRYPTION_METHOD == "STARTTLS":
+                try:
+                    session.starttls()
+                    session.ehlo()  # Re-identify after STARTTLS
+                except smtplib.SMTPException as e:
+                    print(f"Warning: STARTTLS failed: {e}")
+
+        # Try authentication if a password is provided
+        if EMAIL_PASSWORD:
+            try:
+                session.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            except smtplib.SMTPAuthenticationError as e:
+                print(f"SMTP Authentication failed: {e}")
+            except Exception as e:
+                print(f"Authentication error: {e}")
+
+        # Send the email
+        session.sendmail(EMAIL_ADDRESS, TO_ADDRESS, msg.as_string())
+        session.quit()
+        print(f"Email sent successfully using {ENCRYPTION_METHOD}.")
 
     except Exception as e:
         print(f"Failed to send email: {e}")

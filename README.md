@@ -30,6 +30,7 @@ Server = smtp.example.com
 Port = 587
 Email = your_email@example.com
 Password = your_password
+Encryption = STARTTLS
 
 [Email]
 ToAddress = recipient_email@example.com
@@ -76,6 +77,7 @@ The `check.conf` file controls the application behavior. Here’s what each sect
   - `Port`: The SMTP server port (e.g., `587` for TLS).
   - `Email`: The sender's email address.
   - `Password`: The sender's email password.
+  - `Encryption`: The Method of Encryption Used (STARTTLS, TLS, SSL, NONE)
 
 - **[Email]:** Configures the email content.
   - `ToAddress`: The recipient's email address.

@@ -1,98 +1,39 @@
-# Daily Email Scheduler
+# Email Scheduler GUI
 
-A simple Python application that sends daily emails at a specified time using an SMTP server. The app reads its configuration from a `.conf` file, allowing flexible email content, scheduling, and server settings without modifying the code.
+This is a Python-based GUI application for scheduling and sending emails. It allows you to:
+
+- **Configure SMTP settings** (server, port, encryption, credentials)  
+- **Schedule emails** on a specific time basis (daily, once, weekly, monthly) or on a repeating interval (e.g., every 15 minutes)  
+- **Manually send emails now**  
+- **Attach files** (e.g., PDFs, images) to your emails  
+- **Store** and **edit** scheduled emails in a local **SQLite** database  
+
+The application uses [Tkinter](https://docs.python.org/3/library/tkinter.html) for the GUI and [smtplib](https://docs.python.org/3/library/smtplib.html) for sending emails.
+
+---
 
 ## Features
-- Sends emails daily at a configurable time.
-- Reads email settings (SMTP server, credentials, recipient, etc.) from a `.conf` file.
-- Logs email success or failure to the console.
-- Fully customizable email content and schedule.
 
-## Prerequisites
-- Python 3.6 or later
-- Required Python libraries:
-  - `smtplib`
-  - `email`
-  - `schedule`
-  - `configparser`
+1. **SMTP Settings**  
+   - Enter your SMTP server (e.g., `smtp.gmail.com` or `smtp.mailgun.org`), port, email address, and password.  
+   - Choose encryption: **SSL**, **STARTTLS**, or **NONE**.
 
-## Setup
+2. **Database-Backed**  
+   - All SMTP settings and emails are stored in a local SQLite database named `scheduler.db`.  
+   - Settings persist between runs of the application.
 
-### 1. Clone or Download the Repository
-Place the project files in a directory of your choice.
+3. **Schedules**  
+   - **Time-based** (Once, Daily, Weekly, or Monthly) at a chosen clock time (HH:MM).  
+   - **Interval-based**: send the email every X minutes.
 
-### 2. Create the Configuration File
-Create a file named `check.conf` in the same directory as the application. Use the following template:
+4. **Last Sent & Next Send**  
+   - The GUI shows when an email was last sent, as well as an estimate of the next send time.
 
-```ini
-[SMTP]
-Server = smtp.example.com
-Port = 587
-Email = your_email@example.com
-Password = your_password
-Encryption = STARTTLS
+5. **Attachment Support**  
+   - You can attach a single file to an email (e.g., PDF, image, document).  
+   - Files are MIME-encoded automatically via Python’s `EmailMessage`.
 
-[Email]
-ToAddress = recipient_email@example.com
-Subject = Daily Update
-Body = This is the daily email sent at a scheduled time.
+6. **Manual Send**  
+   - Force-send any scheduled email immediately by clicking the **Send Now** button.
 
-[Schedule]
-Mode = Time 
-Interval = 3
-Time = 08:55
-```
-
-- Replace `smtp.example.com`, `your_email@example.com`, and other placeholders with actual values.
-- The time format under `[Schedule]` must be in `HH:MM` (24-hour clock).
-- Select Time or Timer mode. Time will send the message everyday at the same time, timer will send the message every X minutes where X is the interval. 
-
-### 3. Install Dependencies
-Install the required Python libraries:
-
-```bash
-pip install schedule
-```
-
-### 4. Run the Application
-Run the script using:
-
-```bash
-python checkin-app.py
-```
-
-The application will read the configuration and schedule the email to be sent daily at the specified time.
-
-### 5. Logs and Console Output
-- The app logs email sending status to the console.
-- If an email fails to send, the error message will be displayed.
-
-## Configuration
-
-### `check.conf`
-The `check.conf` file controls the application behavior. Here’s what each section does:
-
-- **[SMTP]:** Configures the SMTP server for sending emails.
-  - `Server`: The SMTP server address (e.g., `smtp.gmail.com`).
-  - `Port`: The SMTP server port (e.g., `587` for TLS).
-  - `Email`: The sender's email address.
-  - `Password`: The sender's email password.
-  - `Encryption`: The Method of Encryption Used (STARTTLS, TLS, SSL, NONE)
-
-- **[Email]:** Configures the email content.
-  - `ToAddress`: The recipient's email address.
-  - `Subject`: The subject of the email.
-  - `Body`: The body content of the email.
-
-- **[Schedule]:** Configures when the email is sent.
-  - `Time`: Time in `HH:MM` format (24-hour clock). Will be used if Time mode is selected
-  - `Mode`: Time or Timer (Time will send at the time specified, timer will send on the interval specified.)
-  - `Interval`: Interval in Minutes to send the message. Will be used if Timer mode is selected
-
-## Notes
-- Ensure the SMTP server credentials are valid.
-- If using Gmail or similar services, you may need to enable "less secure apps" or generate an app password.
-- Keep the `check.conf` file secure to protect your email credentials.
-
-## License
-This project is licensed under the MIT License.
+---

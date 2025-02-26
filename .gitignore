@@ -1,6 +1,5 @@
 #ignored files
-app.py
-check.conf
+scheduler.db
 *.spec
 build/
 dist/
